@@ -1,8 +1,6 @@
 // frontend/src/store/modules/auth.js
 import ApiService from '@/services/api';
 
-
-
 export default {
     namespaced: true,
     state: {

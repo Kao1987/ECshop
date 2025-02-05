@@ -171,7 +171,7 @@ exports.updateProduct = async (req, res) => {
       if (!name||typeof name != 'string' || name.trim() === '') missingFields.push('name');
       if (!description || typeof description !== 'string' || description.trim()==='') missingFields.push('description');
       if (!price || isNaN(price) || price <= 0) missingFields.push('price');
-      if (!stock || isNaN(price) || price < 0) missingFields.push('stock');
+      if (!stock || isNaN(stock) || stock < 0) missingFields.push('stock');
       if (!brand_id || isNaN(brand_id)) missingFields.push('brand_id');
       console.error('缺少必要欄位:', missingFields);
       throw new Error('缺少必要欄位');
@@ -236,7 +236,7 @@ exports.updateProduct = async (req, res) => {
         });
       }
       res.status(500).json({
-        message:'更新產品品失敗',
+        message:'更新產品失敗',
         error:error.message,
       });
     }finally{

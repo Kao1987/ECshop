@@ -322,6 +322,18 @@ color: white;
 transform: translateY(-1px);
 }
 
+.loading{
+    position: fixed;
+    top:50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    z-index: 9999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 /* 響應式調整 */
 @media (max-width: 991.98px) {
 .sticky-top {

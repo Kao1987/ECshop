@@ -223,15 +223,24 @@ export default {
                 const sevenDaysAgoStr = this.getLocalDateStr(sevenDaysAgo);
 
                 this.todaySales = orders
-                    .filter(order => order.order_date.split('T')[0] === todayStr)
+                    .filter(order => {
+                        const orderDate = this.getLocalDateStr(order.order_date);
+                        return orderDate === todayStr;
+                    })
                     .reduce((sum, order) => sum + Number(order.total), 0);
 
                 this.yesterdaySales = orders
-                    .filter(order => order.order_date.split('T')[0] === yesterdayStr)
+                    .filter(order => {
+                        const orderDate = this.getLocalDateStr(order.order_date);
+                        return orderDate === yesterdayStr;
+                    })
                     .reduce((sum, order) => sum + Number(order.total), 0);
 
                 this.last7DaySales = orders
-                    .filter(order => order.order_date.split('T')[0] >= sevenDaysAgoStr && order.order_date.split('T')[0] <= todayStr)
+                    .filter(order => {
+                        const orderDate = this.getLocalDateStr(order.order_date);
+                        return orderDate >= sevenDaysAgoStr && orderDate <= todayStr;
+                    })
                     .reduce((sum, order) => sum + Number(order.total), 0);
 
                 // 準備圖表數據

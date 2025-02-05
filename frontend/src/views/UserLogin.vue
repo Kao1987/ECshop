@@ -98,11 +98,13 @@ import { mapActions } from 'vuex';
                     console.log("找到的用戶",user);
                     alert('登入成功!歡迎' + user.name);
                     
-                    const redirectPath = this.$route.query.redirect || '';
-                    if (user.role.toLowerCase() === 'admin') {
-                        this.$router.push(typeof redirectPath === 'string' && redirectPath.startsWith('/admin') ? redirectPath : '/admin');
-                    } else {
-                        this.$router.push(typeof redirectPath === 'string' && !redirectPath.startsWith('/admin') ? redirectPath : '/MembersPage');
+                    const redirectPath = this.$route.query.redirect;
+                    if(redirectPath){
+                        this.$router.push(redirectPath);
+                    }else if(user.role === 'admin'){
+                        this.$router.push('/admin');
+                    }else{
+                        this.$router.push('/Memberspage');
                     }
                 }catch (error){
                     handleApiError(error,'登入失敗，請稍後再試');
@@ -113,10 +115,10 @@ import { mapActions } from 'vuex';
 </script>
 <style scoped>
 .form-floating label {
-    font-size: 1rem !important; /* 強制設定基礎字體大小 */
+    font-size: 1rem !important; 
 }
 .form-floating input {
-    height: calc(3.5rem + 2px); /* 確保輸入框高度足夠 */
+    height: calc(3.5rem + 2px); 
     padding-top: 1.625rem;
     padding-bottom: 0.625rem;
 }

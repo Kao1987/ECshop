@@ -6,58 +6,68 @@
             <!-- 手機版選單的 Toggler 按鈕 -->
             <div class="headerbar d-flex align-items-center">
                 <BNavbarToggle @click="toggleNav"></BNavbarToggle>
-                <div v-if="!isNavOpen" class="nav-toggle-wrapper d-flex align-items-center ms-2">
+                <div v-if="!isNavOpen" class="nav-toggle-wrapper d-flex align-items-center ms-2 d-lg-none">
                     <img 
                     :src="$getImageUrl('arrowleft.png','icon')"
                     alt="導航提示" class="nav-toggle-image" @click="toggleNav"/>
                     <span class="nav-toggle-text ms-1">請點選此處開啟導航欄</span>
-
                 </div>
             </div>
-            <!-- 導覽左 -->
-            <BCollapse id="nav-collapse" v-model="isNavOpen" is-nav>
-                <div class="nav-content d-flex w-100 align-items-center justify-content-between">
-                    <BNavbarNav class="nav-links me-lg-3">
+            <div class="nav-content d-flex align-items-center jusify-content-between">
+                <!-- 導覽左 -->
+                <BCollapse id="nav-collapse" v-model="isNavOpen" is-nav>
+                    <div class="nav-left d-flex align-items-center justify-content-between">
+                        <BNavbarNav class="nav-links">
                         <!-- 功能導航欄 -->
                         <div
                             v-for = "item in navItems"
-                            :key="item.path"
-                            :to="item.path"
-                            class="nav-item-container"
+                                :key="item.path"
+                                :to="item.path"
+                                class="nav-item-container"
                             >
-                            <router-link :to="item.path" class="nav-link-text" @click="closeNav"
-                            >
-                            {{ item.text }}</router-link>
+                            <router-link 
+                                :to="item.path" 
+                                class="nav-link-text" 
+                                @click="closeNav"
+                                >
+                                {{ item.text }}
+                            </router-link>
+                        </div>
+                        </BNavbarNav>
                     </div>
-                    </BNavbarNav>
-                        <!-- 搜尋欄—置中 -->
-                        <div class="search-container d-flex mx-lg-3">
+                    <!-- 搜尋欄—置中 -->
+                    <div class="nav-center d-flex justify-content-center flex-fill">
+                        <div class="search-container d-flex">
                             <div class="search-input-wrapper">
-                            <BFormInput  
+                                <BFormInput  
                                 type="text" 
                                 v-model="searchQuery" 
                                 class="search-box" 
-                                placeholder="請輸入想找的商品搜尋" 
+                                :placeholder="currentPlaceholder" 
                                 @keyup.enter="handleSearch">
                             </BFormInput>
-                            <BButton class="search-button btn btn-primary ms-2"  @click="handleSearch">搜尋</BButton>
-                            </div>
-
+                            <BButton class="search-button btn btn-primary ms-2"  @click="handleSearch">
+                                <span class="search-button-text">搜尋 </span>
+                                <i class="fas fa-search search-icon"></i>
+                            </BButton>
                         </div>
-                    <!-- 導覽右—快捷 -->
-                    <div class="cartmember d-flex">
+                    </div>
+                </div>
+                <!-- 導覽右—快捷 -->
+                <div class="nav-right d-flex align-items-center ms-auto">
+                    <div class="cartmember d-flex align-items-center">
                         <router-link class="cart-item me-3" to="/ShopCart" @click="closeNav">
                             <img :src="$getImageUrl('shopping_cart.png','icon')" alt="" class="icon-img">
                             <span class="cart-text">購物車</span>
                         </router-link>
                         <template v-if="isLoggedIn">
-                            <div class="member-item">
-                                <span class="cart-text">歡迎 {{ userName }}</span>
-                                <button class="btn btn-link cart-text" @click="logout">會員登出</button>
+                            <div class="member-item d-flex align-items-center">
+                                <span class="cart-text welcome-text me-2">歡迎 {{ userName }}</span>
+                                <button class="btn btn-link logout-btn" @click="logout">會員登出</button>
                             </div>
                         </template>
                         <template v-else>
-                            <router-link class="member-item" to="/UserLogin" @click="closeNav">
+                            <router-link class="member-item d-flex align-items-center" to="/UserLogin" @click="closeNav">
                                 <img :src="$getImageUrl('member_login.png','icon')" alt="" class="icon-img">
                                 <span class="cart-text">會員登入</span>                            
                             </router-link>
@@ -65,9 +75,10 @@
                     </div>
                 </div>
             </BCollapse>
+            </div>
         </BContainer>
     </BNavbar>
-    </div>
+</div>
 </template>
 
 <script>
@@ -76,7 +87,8 @@ export default {
     data(){
         return{
             searchQuery:'',
-            isNavOpen:window.innerWidth < 992,
+            isNavOpen:false,
+            windowWidth:window.innerWidth,
             navItems: [
                 { path: '/', text: '首頁' },
                 { path: '/MembersPage', text: '會員中心' },
@@ -93,6 +105,9 @@ export default {
         },
         userName(){
             return this.$store.state.auth.user ? this.$store.state.auth.user.name:'';
+        },
+        currentPlaceholder(){
+            return this.windowWidth < 576 ? '搜尋商品' : '請輸入想找的商品';
         }
     },
     methods:{
@@ -121,7 +136,7 @@ export default {
         }
         },
         handleResize(){
-            this.checkScreenSize();
+            this.windowWidth = window.innerWidth;
         },
         logout(){
             this.$store.dispatch('auth/logout');
@@ -145,6 +160,11 @@ export default {
 <style scoped>
 @import 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
 
+.container-fluid{
+    padding-right:0 !important;
+    padding-left:0 !important;
+    overflow: hidden;
+}
 .headerbar{
     position:relative;
 }
@@ -159,12 +179,15 @@ export default {
     background:var(--header-bg-image);
     background-size: cover;
     background-repeat: no-repeat;
+    overflow: hidden;
+    width: 100%;
 }
 
 .navbar-overlay{
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(5px);
     --bs-bg-opacity:0;
+    width: 100%;
 }
 
 .nav-content {
@@ -172,12 +195,30 @@ export default {
     flex-wrap: nowrap !important;
     align-items: center;
     width: 100%;
-    justify-content: space-between;
+    max-width: 100%;
 }
-
+.nav-left{
+    flex: 0 0 auto;
+    display:flex;
+    align-items: center;
+}
+.nav-center{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.nav-right{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+}
 .nav-links {
     flex: 0 0 auto;
-    margin-right: 1rem;
+    margin: 0;
+    padding: 0;
+    z-index: 2;
 }
 .nav-link-text{
     color:#ffffff;
@@ -187,6 +228,8 @@ export default {
 }
 .nav-link-text::after {
     width: 100%;
+    height: 2px;
+
 }
 .nav-item-container {
     padding: 0.5rem 0.8rem;
@@ -223,19 +266,16 @@ export default {
     width: 80%;
 }
 
-/* 活躍狀態樣式 */
 .nav-item-container.active {
     background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
     color: #0056b3;
 }
 
-/* 添加點擊效果 */
 .nav-item-container:active {
     transform: translateY(0);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* 確保文字顏色過渡效果 */
 .nav-link-text {
     transition: color 0.3s ease;
 }
@@ -248,14 +288,16 @@ export default {
     position: relative;
     display: flex;
     width: 100%;
-    justify-content: center;
+    max-width: 100%;
 }
 .search-box{
     border-radius:20px;
-    padding-right: 200px;
+    padding:0 80px 0 15px;
     border: 2px solid #ddd;
     transition:all 0.3s ease;    
     height: 38px;
+    width: 100%;
+    min-width: 200px;
 }
 .search-box:focus{
     border-color: #0056b3;
@@ -268,26 +310,35 @@ export default {
     height: 100%;
     background-color:#0056b3;
     border-radius: 0 20px 20px 0;
-    padding:0 1.5rem;
+    padding:0 1rem;
     transition: all 0.3s ease; 
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 60px;
 }
 .search-container{
     display: flex;
-    justify-content: center;
+    justify-content:start;
     align-items: center;
-    flex: 1;
+    flex: 0 1 auto;
     max-width: 400px;
-    margin: 0 8px;
-    padding: 0 8px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
-
+.search-icon{
+    display:none;
+}
 .cartmember{
     flex: 0 0 auto;
-    margin-left: 1rem;
+    margin-left: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    min-width: max-content;
 }
 .cart-item{
     display: flex;
@@ -313,6 +364,75 @@ export default {
 .cart-item:hover .icon-img{
     transform: scale(1.1);
 }
+.member-item{
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    min-width: fit-content;
+    flex-wrap:nowrap;
+    gap:0.5rem;
+}
+
+.member-item:hover{
+    background-color: #2563b3;
+    transform: translateY(-2px);
+}
+
+.member-item{
+    margin-right: 0.5rem;
+}
+
+.member-item .btn-link{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.member-item .btn-link:hover{
+    color: #e6f3ff;
+}
+.member-info{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    white-space: nowrap;
+}
+.welcome-text{
+    margin-bottom:2px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+.nav-toggle-image {
+    margin-left: 10px;
+    width: 24px; /* 根據需要調整大小 */
+    height: 24px; /* 根據需要調整大小 */
+    animation: blink 1.5s infinite;
+    cursor: pointer;
+}
+.logout-btn{
+    color:#ffffff !important;
+    text-decoration: none;
+    padding: 2px 8px !important;
+    margin: 0;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    transition: all 0.3 ease;
+    background-color: rgba (255,255,255,0.1);
+    border-radius: 4px;
+    min-width: max-content;
+}
+.logout-btn:hover{
+    background-color: rgba (255,255,255,0.2);
+    transform: translateY(-1px);
+}
 
 /* 新增的閃爍動畫 */
 @keyframes blink {
@@ -323,14 +443,7 @@ export default {
         opacity: 0;
     }
 }
-
-.nav-toggle-image {
-    margin-left: 10px;
-    width: 24px; /* 根據需要調整大小 */
-    height: 24px; /* 根據需要調整大小 */
-    animation: blink 1.5s infinite;
-    cursor: pointer;
-}
+/* -------RWD------- */
 
 @media (min-width: 1200px) {
     .navbar-overlay {
@@ -344,11 +457,11 @@ export default {
     .navbar-overlay{
         position:relative;
     }
-    .topheader,
     .search-container,
     .cartmember{
         flex-direction: row;
         align-items: center;
+        flex-wrap: nowrap;
     }      
     .cartmember{
         white-space: nowrap;
@@ -356,6 +469,8 @@ export default {
     .search-container {
         flex: 0 1 400px;
         margin: 0 auto;
+        justify-content: center;
+        align-items: center;
     }
 }
 
@@ -379,35 +494,73 @@ export default {
         justify-content: center;
     }
     .cartmember{
-        width: 100%;
+        width: auto;
         justify-content:center;
         margin-top:0.5rem;
+        padding:0 0.5rem;
     }
     .cart-item{
         margin-left: 0.5rem;
     }
+    .member-item{
+        margin: 0.25rem;
+        justify-content: center;
+    }
     .nav-link-text{
         text-align: center;
+    }
+    .member-info{
+        flex-direction: row;
+        align-items: center;
+        gap:8px;
+    }
+    .welcome-text{
+        margin-bottom:0 ;
     }
 }
 @media (max-width: 576px) {
     .nav-links {
         justify-content: flex-start;
     }
-    
-    .nav-item-custom {
-        flex: 0 0 auto;
-        margin: 0.5rem 0;
-        width: 100%;
-    }
     .cart-item {
         margin: 0.25rem 0.5rem;
     }
-}
-@media (max-width: 375px) {
-    .text-link{
+    .search-box {
+        padding-right: 50px;
+        font-size: 14px;
+        min-width: 150px;
+        width: 100%;
+    }
+    
+    .search-button {
+        padding: 0 0.75rem;
+    }
+    
+    .search-button-text {
+        display:none;
+    }
+    
+    .search-icon {
+        display: inline-block;
+    }
+    .search-container {
+        margin: 0 4px;
+        padding: 0 4px;
+        width: 100%;
+    }
+    .welcome-text{
         display: none;
     }
+    .logout-btn{
+        padding: 4px 12px !important;
+        font-size:0.85rem;
+    }
+    .nav-right{
+        flex: 1;
+        justify-content: center;
+    }
+}
+@media (max-width: 375px) {
     .icon-img{
         margin-right: 0;
     }
@@ -426,28 +579,41 @@ export default {
         width: auto;
         right: 0;
     }
+    .search-box{
+        padding-right: 40px;
+    }
+    .search-button{
+        padding: 0 0.5rem;
+    }
+    .member-item{
+        padding: 0.25rem;
+    }
+    .logout-btn{
+        padding: 2px 8px !important;
+        font-size:0.8rem;
+    }
 }
-@media (min-width: 992px) and (max-width: 1121px) {
+@media (min-width: 992px) and (max-width: 1200px) {
     .nav-content {
-        justify-content: space-between;
-        flex-wrap: nowrap; /* 防止項目行 */
+        max-width:100%;
+        margin:0 0.5rem;
     }
     .cartmember {
         white-space: nowrap;
-        flex-shrink: 0; /* 防止購物車和登入按鈕縮小 */
+        flex:0 0 auto;
+        min-width: fit-content;
     }
     .nav-links {
         flex-shrink: 1; /* 允許導航鏈接縮小以適應空間 */
     }
     .search-container {
         margin: 0 1rem; /* 在兩側加一些間距 */
-        min-width: 200px; /* 設置最小寬度 */
-        flex-shrink: 1; /* 允許搜索框縮小 */
-        flex-grow: 0;
-        width:300px;
+        max-width: 400px;
+        min-width: 250px; /* 設置最小寬度 */
+        flex:1 1 auto;
     }
     .nav-item-container {
-        padding: 0.5rem; /* 稍微減少水平內邊距 */
+        padding: 0.5rem 0.4rem;
     }
     /* 可能需要調整搜索框的樣式 */
     .search-input-wrapper {
@@ -455,42 +621,14 @@ export default {
     }
     .search-box {
         padding-right: 90px; /* 稍微減少右側內邊距 */
+        width: 100%;
     }
     .search-button {
         padding: 0.375rem 1rem; /* 稍微減少按鈕的內邊距 */
     }
 }
 
-/* 新增 .member-item 樣式 */
-.member-item{
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    color: #ffffff;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border-radius: 20px;
-    white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
 
-.member-item:hover{
-    background-color: #2563b3;
-    transform: translateY(-2px);
-}
-
-.member-item .text-link{
-    margin-right: 0.5rem;
-}
-
-.member-item .btn-link{
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.member-item .btn-link:hover{
-    color: #e6f3ff;
-}
 
 
 .cart-text {

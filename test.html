@@ -16,11 +16,12 @@
                 >
                 <i class="bi bi-box-seam"></i>商品管理
             </button>
+
             </li>
             <li class="nav-item" role="presentation">
                 <button 
                     class="nav-link" 
-                    id="brand-tab" 
+                    id="tag-tab" 
                     data-bs-toggle="tab" 
                     data-bs-target="#brand" 
                     type="button" 
@@ -53,194 +54,166 @@
                 role="tabpanel" 
                 aria-labelledby="product-tab"
             >
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="btn-group shadow-sm">
-                        <router-link to="/admin/CreateProduct" class="btn btn-success d-flex align-items-center">
-                            <i class="bi bi-plus-circle me-2"></i>新增商品
-                        </router-link>
-                        <router-link to="/admin/SpecialOffers" class="btn btn-primary d-flex align-items-center">
-                            <i class="bi bi-tag me-2"></i>特價商品
-                        </router-link>
-                    </div>
-                </div>
-                <div class="card-header bg-white d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0">商品清單</h5>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr class="text-nowrap text-center">
-                            <th>商品名稱</th>
-                            <th>價格</th>
-                            <th>庫存</th>
-                            <th>描述</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(product,index) in paginatedProducts" :key="product.id">
-                            <td class="product-info-cell">
-                                <span class="product-name" :title="product.name">
-                                    {{ product.name }}
-                                </span>
-                                <button 
-                                    class="btn btn-link btn-sm"
-                                    @click="showProductDetail(product)"
-                                >
-                                    查看詳情
-                                </button>
-                            </td>
-                            <td>NT${{ Math.round(product.price) }}</td>
-                            <td class="text-nowrap text-center">
-                                <span :class="product.stock <= 10 ? 'text-danger' : 'text-success'">
-                                    {{ product.stock }}
-                                </span>
-                            </td>
-                            <td>            
-                                <div class="product-description-container">
-                                    <p class="product-description mb-1" 
-                                        :class="{'expanded':product.isDescriptionExpanded}"
-                                        style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;"
-                                    >
-                                        {{ product.isDescriptionExpanded ? product.description : product.description.slice(0,50) + '...' }}
-                                    </p>
-                                    <button 
-                                        v-if="product.description.length > 50" 
-                                        class="btn btn-link btn-sm p-0"
-                                        @click="toggleDescription(product)"
-                                    >
-                                        {{ product.isDescriptionExpanded ? '收起' : '查看更多' }}
-                                    </button>
-                                </div>
-                            </td>
-                            <td class="text-center align-middle">
-                                <div class="d-flex justify-content-center">
-                                    <router-link 
-                                        :to="{ name:'EditProduct', params: { id: product.id } }" 
-                                        class="btn btn-warning btn-sm me-2" 
-                                    >
-                                        編輯
-                                    </router-link>
-                                    <button 
-                                        class="btn btn-danger btn-sm" 
-                                        @click="deleteProduct(product.id, index)"
-                                    >
-                                        刪除
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="d-flex align-items-center">
-                        <label class="me-2">每頁顯示：</label>
-                        <select v-model.number="itemsPerPage" class="form-select form-select-sm w-auto">
-                            <option v-for="option in itemsPerPageOptions" :key="option" :value="option">
-                                {{ option }}
-                            </option>
-                        </select>
-                </div>
-                <div class="card-footer bg-white d-flex justify-content-between align-items-center">
-                        <div>第 {{ currentPage }} 頁，共 {{ totalPages }} 頁</div>
-                            <button 
-                                class="btn btn-outline-secondary" 
-                                :disabled="currentPage === 1" 
-                                @click="currentPage--"
-                            >
-                                上一頁
-                            </button>
-                            <button 
-                                class="btn btn-outline-secondary" 
-                                :disabled="currentPage === totalPages" 
-                                @click="currentPage++"
-                            >
-                                下一頁
-                            </button>
-                    </div>    
-            </div>
-        </div>
-        <!-- 廠牌管理 -->
-        <div class="tab-pane fade" id="brand" role="tabpanel" aria-labelledby="brand-tab">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <button class="btn btn-success" @click="openCreateBrandModal">
-                    <i class="bi bi-plus-circle me-2"></i>新增廠牌
-                </button>
-            </div>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-            <div v-for="(brand, index) in brands" :key="brand.id" class="col">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="card-title mb-0">{{ brand.name }}</h6>
-                            <div class="dropdown">
-                                <button class="btn btn-link" type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <button class="dropdown-item" @click="openEditBrandModal(index)">
-                                            <i class="bi bi-pencil me-2"></i>編輯
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button class="dropdown-item text-danger" @click="deleteBrand(brand.id, index)">
-                                            <i class="bi bi-trash me-2"></i>刪除
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <p class="card-text text-muted mt-2">
-                                <small>已標記商品:{{ brand.productCount || 0 }} 項</small>
-                            </p>
-                    </div>
+                <div class="btn-group shadow-sm">
+                    <router-link to="/admin/CreateProduct" class="btn btn-success d-flex align-items-center">
+                        <i class="bi bi-plus-circle me-2"></i>新增商品
+                    </router-link>
+                    <router-link to="/admin/SpecialOffers" class="btn btn-primary d-flex align-items-center">
+                        <i class="bi bi-tag me-2"></i>特價商品
+                    </router-link>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- 標籤管理 -->
-        <div class="tab-pane fade" id="tag" role="tabpanel" aria-labelledby="tag-tab">
-            <div class="d-flex justify-content-start align-items-center mb-4">
-                <h5 class="mb-0">標籤列表</h5>
-                <button class="btn btn-success" @click="openCreateTagModal">
-                    <i class="bi bi-plus-circle me-2"></i>新增標籤
-                </button>
-            </div>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                <div v-for="(tag, index) in tags" :key="tag.id" class="col">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="card-title mb-0">
-                                    <i class="bi bi-tag me-2"></i>{{  tag.name }}
-                                </h6>
-                                <div class="dropdown">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <button class="dropdown-item" @click="openEditTagModal(index)">
-                                            <i class="bi bi-pencil me-2"></i>編輯
+            <div class="card-header bg-white d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">商品清單</h5>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr class="text-nowrap text-center">
+                                    <th>商品名稱</th>
+                                    <th>價格</th>
+                                    <th>庫存</th>
+                                    <th>描述</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(product,index) in paginatedProducts" :key="product.id">
+                                    <td class="product-info-cell">
+                                        <span class="product-name" :title="product.name">
+                                            {{ product.name }}
+                                        </span>
+                                        <button 
+                                            class="btn btn-link btn-sm"
+                                            @click="showProductDetail(product)"
+                                        >
+                                            查看詳情
                                         </button>
-                                    </li>
-                                    <li>
-                                        <button class="dropdown-item text-danger" @click="deleteTag(tag.id, index)">
-                                            <i class="bi bi-trash me-2"></i>刪除
-                                        </button>
-                                    </li>
-                                </ul>
-                                </div>
+                                    </td>
+                                    <td>NT${{ Math.round(product.price) }}</td>
+                                    <td class="text-nowrap text-center">
+                                        <span :class="product.stock <= 10 ? 'text-danger' : 'text-success'">
+                                            {{ product.stock }}
+                                        </span>
+                                    </td>
+                                    <td>            
+                                        <div class="product-description-container">
+                                            <p class="product-description mb-1" 
+                                                :class="{'expanded':product.isDescriptionExpanded}"
+                                                style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;"
+                                            >
+                                                {{ product.isDescriptionExpanded ? product.description : product.description.slice(0,50) + '...' }}
+                                            </p>
+                                            <button 
+                                                v-if="product.description.length > 50" 
+                                                class="btn btn-link btn-sm p-0"
+                                                @click="toggleDescription(product)"
+                                            >
+                                                {{ product.isDescriptionExpanded ? '收起' : '查看更多' }}
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <div class="d-flex justify-content-center">
+                                            <router-link 
+                                                :to="{ name:'EditProduct', params: { id: product.id } }" 
+                                                class="btn btn-warning btn-sm me-2" 
+                                            >
+                                                編輯
+                                            </router-link>
+                                            <button 
+                                                class="btn btn-danger btn-sm" 
+                                                @click="deleteProduct(product.id, index)"
+                                            >
+                                                刪除
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex align-items-center">
+                                <label class="me-2">每頁顯示：</label>
+                                <select v-model.number="itemsPerPage" class="form-select form-select-sm w-auto">
+                                    <option v-for="option in itemsPerPageOptions" :key="option" :value="option">
+                                        {{ option }}
+                                    </option>
+                                </select>
                             </div>
-                            <p class="card-text text-muted mt-2">
-                                <small>已標記商品:{{ tag.productCount || 0 }} 項</small>
-                            </p>
-                        </div> 
-                    </div> 
-                </div> 
+                            <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+                                <div>第 {{ currentPage }} 頁，共 {{ totalPages }} 頁</div>
+                                    <button 
+                                        class="btn btn-outline-secondary" 
+                                        :disabled="currentPage === 1" 
+                                        @click="currentPage--"
+                                    >
+                                        上一頁
+                                    </button>
+                                    <button 
+                                        class="btn btn-outline-secondary" 
+                                        :disabled="currentPage === totalPages" 
+                                        @click="currentPage++"
+                                    >
+                                        下一頁
+                                    </button>
+                            </div>    
+            </div>
+            <!-- 廠牌管理 -->
+            <div class="tab-pane fade" id="brand" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <button class="btn btn-success" @click="openCreateBrandModal">
+                        <i class="bi bi-plus-circle me-2">
+                            新增廠牌
+                        </i>
+                    </button>
+                </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>廠牌名稱</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(brand, index) in brands" :key="brand.id">
+                        <td>{{ brand.name }}</td>
+                        <td>
+                        <button class="btn btn-warning btn-sm" @click="openEditBrandModal(index)">編輯</button>
+                        <button class="btn btn-danger btn-sm ml-2" @click="deleteBrand(brand.id, index)">刪除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            <!-- 標籤管理 -->
+            <div class="tab-pane fade"
+                id="tag" 
+                role="tabpanel" 
+                aria-labelledby="tag-tab"
+            >
+            <div class="d-flex justify-content-start mb-3">
+                <button class="btn btn-success" @click="openCreateTagModal">新增標籤</button>
+            </div>
+            <table class="table">
+            <thead>
+                <tr>
+                    <th>標籤名稱</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+                <tbody>
+                <tr v-for="(tag, index) in tags" :key="tag.id">
+                    <td>{{ tag.name }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" @click="openEditTagModal(index)">編輯</button>
+                        <button class="btn btn-danger btn-sm ml-2" @click="deleteTag(tag.id, index)">刪除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
             </div>
         </div>
     </div>
-
     <!-- 標籤編輯Modal -->
     <div class="modal fade" tabindex="-1" ref="tagModal">
         <div class="modal-dialog">
@@ -330,6 +303,11 @@ import { Modal } from 'bootstrap';
                 currentPage:1,
                 itemsPerPage:10,
                 itemsPerPageOptions:[10,20,50],
+                isSectionOpen:{
+                    products:true,
+                    tags:false,
+                    brands:false,
+                }
             };
         },
         mounted(){
@@ -349,6 +327,9 @@ import { Modal } from 'bootstrap';
             }
         },      
         methods:{
+            toggleSection(section){
+                this.isSectionOpen[section] = !this.isSectionOpen[section];
+            },
             // 加載產品列表
             async loadProducts(){
                 try{
@@ -511,6 +492,9 @@ import { Modal } from 'bootstrap';
             toggleDescription(product) {
                 product.isDescriptionExpanded = !product.isDescriptionExpanded;
             },
+            toggleName(product) {
+            product.isNameExpanded = !product.isNameExpanded;
+            },
         },
         watch:{
             itemsPerPage(){
@@ -521,26 +505,6 @@ import { Modal } from 'bootstrap';
 };
 </script>
 <style scoped>
-.admin-tabs .nav-links{
-    color:#6c757d;
-    border-radius: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    transition:all 0.2s ease;
-}
-.admin-tabs .nav-links:hover{
-    background-color: #e9ecef;
-}
-.admin-tabs .nav-link.active{
-    background-color: #0d6efd;
-    color: white;
-}
-.card{
-    transition: transform 0.2s ease,box-shadow 0.2s ease;
-}
-.card:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0, 0.15);
-}
 .product-container {
     display: flex;
     flex-direction: column;
