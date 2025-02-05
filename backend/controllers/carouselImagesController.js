@@ -40,9 +40,8 @@ exports.createCarouselImage = async (req, res) => {
             throw new Error('未上傳圖片');
         }
         
-        const baseUrl = process.env.CAROUSEL_IMAGE_URL || '/api/img/carouselImages'; 
-        // 若沒有設定環境變數，就用 /api/img/carouselImages 當預設
-        const imageUrl = `${baseUrl}/${req.file.filename}`;
+        const relativePath = `carouselImages/${req.file.filename}`; 
+        const imageUrl = relativePath;
         
         // 插入資料庫 
         const [result] = await connection.query(

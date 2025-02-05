@@ -1,6 +1,5 @@
 // src/utils/request.js
 import axios from 'axios';
-import store from '@/store';
 import router from '@/router';
 
 const request = axios.create({

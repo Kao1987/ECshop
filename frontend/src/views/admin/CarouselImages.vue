@@ -130,23 +130,6 @@ export default {
                 handleApiError(error,'加載輪播圖片失敗');
             }
         },
-        handleFileSelect(event){
-            const file= event.target.files[0];
-            if(file){
-                const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                if(!validTypes.includes(file.type)){
-                    alert('僅支援JPEG, PNG, GIF 格式的圖片！');
-                    return;
-                }
-                if(file.size > maxSize){
-                    alert('圖片超出5MB的上限！');
-                    return;
-                }
-                this.selectedFile = file;
-                this.previewUrl = URL.createObjectURL(file);
-            }
-        },
         async confirmUpload() {
             if(!this.selectedFile){
                 alert('沒有選擇任何文件！');
@@ -199,12 +182,33 @@ export default {
         },
         onImgError(event,index){
             console.error(`圖片 #${index} 載入失敗！`);
-            event.target.src = '/img/wrong.png' || process.env.VUE_APP_API_URL + '/img/wrong.png';
+            event.target.onerror = null;
+            event.target.src = process.env.VUE_APP_API_URL ? process.env.VUE_APP_API_URL + '/img/wrong.png' : '/api/img/wrong.png';
+        },
+        handleFile(file){
+            const validTypes = ['image/jpeg','image/png','image/gif'];
+            const maxSize = 5 * 1024 * 1024;
+            if(!validTypes.includes(file.type)){
+                alert('僅支援 JPEG, PNG, GIF格式的圖片!');
+                return;
+            }
+            if(file.size > maxSize){
+                alert('圖片大小不可超過5MB!')
+                return;
+            }
+            this.selectedFile = file;
+            this.previewUrl = URL.createObjectURL(file);
         },
         handleFileDrop(event) {
             this.isDragging = false;
             const file = event.dataTransfer.files[0];
             if (file) {
+                this.handleFile(file);
+            }
+        },
+        handleFileSelect(event){
+            const file= event.target.files[0];
+            if(file){
                 this.handleFile(file);
             }
         },
