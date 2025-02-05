@@ -243,11 +243,9 @@ export default {
         }
     },
     async mounted(){
-        this.loadingTimeout = setTimeout(()=>{
-            if(this.isPageLoading){
-                window.location.reload();
-            }
-        }, 10000);
+        setTimeout(()=>{
+            this.isPageLoading = false;
+        }, 1500);
         // console.log('環境變數:', {
         //     API_BASE_URL: process.env.VUE_APP_API_BASE_URL,
         //     CAROUSEL_IMAGE_URL: process.env.VUE_APP_CAROUSEL_IMAGE_BASE_URL,
