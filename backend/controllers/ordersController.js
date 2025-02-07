@@ -86,7 +86,7 @@ exports.createOrder = async (req, res) => {
     const  {user_id, items, total} = req.body;
     // 插入訂單表
     const [orderResult] = await connection.query(
-      'INSERT INTO orders (user_id, total, status order_date) VALUES (?, ?, ?,NOW())',
+      'INSERT INTO orders (user_id, total, status, order_date) VALUES (?, ?, ?,NOW())',
       [user_id,total,'pending']);
     const orderId = orderResult.insertId;
     // 構建orderItemData

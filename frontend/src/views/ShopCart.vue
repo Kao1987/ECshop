@@ -128,7 +128,7 @@ export default {
                 store.dispatch('cart/clearShoppingCart');
                 store.dispatch('notifications/showNotification', {
                     type:'success',
-                    message: 'order已成功提交！',
+                    message: '訂單已成功提交！',
                     timeout: 2000,
                 });
 
