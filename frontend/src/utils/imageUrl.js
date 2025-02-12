@@ -18,7 +18,7 @@ export const getImageUrl = (path, type) => {
 
   switch(type) {
       case 'carousel':
-        return `${staticBaseURL}/api/img/carouselImages/${path.split('/').pop()}`;
+        return `${API_BASE_URL}/img/carouselImages/${path.split('/').pop()}`;
       case 'product':
         return `${API_BASE_URL}/img/products/${path.split('/').pop()}`;
       case 'icon':
