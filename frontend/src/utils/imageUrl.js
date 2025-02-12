@@ -2,7 +2,7 @@
 
 export const getImageUrl = (path, type) => {
     if (!path) return '/img/wrong.png'
-    ? process.env.VUE_APP_API_BASE_URL + '/img/wrong/png'
+    ? process.env.VUE_APP_API_BASE_URL + '/img/wrong.png'
     :'/api/img/wrong/png';
 
     if(path.startsWith('http')) return path;
