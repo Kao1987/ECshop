@@ -198,8 +198,8 @@ import loadingGif from '@/assets/loading.gif'
 
 const FALLBACK_DATA = {
         carouselImages:[
-        {url:'/static/img/happynewyear.png'},
-        {url:'/static/img/welcome.jpg'},
+        {url:'/img/happynewyear.png'},
+        {url:'/img/welcome.jpg'},
         ]
     };
 
