@@ -1,11 +1,11 @@
 // src/utils/imageUrl.js
 
 export const getImageUrl = (path, type) => {
-  const API_BASE_URL = process.env.VUE_APP_API_BASE_URL || '';
+  const API_BASE_URL = (process.env.VUE_APP_API_BASE_URL || '').replace(/\/$/, '');
   const staticBaseURL = API_BASE_URL.replace(/\/api$/, '');
 
   if (!path) {
-    return API_BASE_URL + '/img/wrong.png'
+    return `${staticBaseURL}/img/wrong.png`;
   }  
 
   if(path.startsWith('http')) {
@@ -18,7 +18,7 @@ export const getImageUrl = (path, type) => {
 
   switch(type) {
       case 'carousel':
-        return `${staticBaseURL}/img/carouselImages/${path.split('/').pop()}`;
+        return `${staticBaseURL}/api/img/carouselImages/${path.split('/').pop()}`;
       case 'product':
         return `${API_BASE_URL}/img/products/${path.split('/').pop()}`;
       case 'icon':

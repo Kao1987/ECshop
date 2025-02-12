@@ -183,7 +183,9 @@ export default {
         onImgError(event,index){
             console.error(`圖片 #${index} 載入失敗！`);
             event.target.onerror = null;
-            event.target.src = process.env.VUE_APP_API_URL ? process.env.VUE_APP_API_URL + '/img/wrong.png' : '/api/img/wrong.png';
+            event.target.src = process.env.VUE_APP_API_BASE_URL 
+            ? process.env.VUE_APP_API_BASE_URL.replace(/\/$/, '') + '/img/wrong.png' 
+            : '/api/img/wrong.png';
         },
         handleFile(file){
             const validTypes = ['image/jpeg','image/png','image/gif'];
