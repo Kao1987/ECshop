@@ -76,3 +76,13 @@ pool.on('error', (err) => {
 if (process.env.NODE_ENV === 'development') {
     console.log('資料庫配置檢查完成');
 }
+
+// 定時 Ping 資料庫，保持連線活躍
+setInterval(async () => {
+    try {
+        await promisePool.query('SELECT 1'); // 執行輕量查詢
+        console.log('定時 Ping 資料庫成功：', new Date().toLocaleString('zh-TW'));
+    } catch (error) {
+        console.error('定時 Ping 資料庫失敗：', new Date().toLocaleString('zh-TW'), error.message);
+    }
+}, 60000); // 每 60 秒執行一次
