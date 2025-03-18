@@ -43,6 +43,24 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/img', express.static(path.join(__dirname, 'public', 'img')));
 app.use('/', express.static(path.join(__dirname, 'public', 'index.html')));
 
+// 健康檢查端點
+app.get('/health', async (req, res) => {
+    try {
+        // 執行資料庫輕量查詢以確保連線正常
+        await pool.query('SELECT 1');
+        console.log('健康檢查成功：', new Date().toLocaleString('zh-TW'));
+        res.status(200).json({
+            status: 'OK',
+            timestamp: new Date().toLocaleString('zh-TW')
+        });
+    } catch (error) {
+        console.error('健康檢查失敗：', error.message);
+        res.status(500).json({
+            status: 'ERROR',
+            message: '資料庫連線異常'
+        });
+    }
+});
 
 // 路由配置
 const routes = {

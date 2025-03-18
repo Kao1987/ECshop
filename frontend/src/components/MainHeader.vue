@@ -13,10 +13,10 @@
                     <span class="nav-toggle-text ms-1">請點選此處開啟導航欄</span>
                 </div>
             </div>
-            <div class="nav-content d-flex align-items-center jusify-content-between">
+            <div class="nav-content">
                 <!-- 導覽左 -->
-                <BCollapse id="nav-collapse" v-model="isNavOpen" is-nav>
-                    <div class="nav-left d-flex align-items-center justify-content-between">
+                <div class="nav-left-wrapper">
+                    <BCollapse id="nav-collapse" v-model="isNavOpen" is-nav>
                         <BNavbarNav class="nav-links">
                         <!-- 功能導航欄 -->
                         <div
@@ -34,17 +34,18 @@
                             </router-link>
                         </div>
                         </BNavbarNav>
-                    </div>
-                    <!-- 搜尋欄—置中 -->
-                    <div class="nav-center d-flex justify-content-center flex-fill">
-                        <div class="search-container d-flex">
-                            <div class="search-input-wrapper">
-                                <BFormInput  
-                                type="text" 
-                                v-model="searchQuery" 
-                                class="search-box" 
-                                :placeholder="currentPlaceholder" 
-                                @keyup.enter="handleSearch">
+                    </BCollapse>
+                </div>
+                <!-- 搜尋欄—置中 -->
+                <div class="nav-center-wrapper">
+                    <div class="search-container">
+                        <div class="search-input-wrapper">
+                            <BFormInput  
+                            type="text" 
+                            v-model="searchQuery" 
+                            class="search-box" 
+                            :placeholder="currentPlaceholder" 
+                            @keyup.enter="handleSearch">
                             </BFormInput>
                             <BButton class="search-button btn btn-primary ms-2"  @click="handleSearch">
                                 <span class="search-button-text">搜尋 </span>
@@ -54,7 +55,7 @@
                     </div>
                 </div>
                 <!-- 導覽右—快捷 -->
-                <div class="nav-right d-flex align-items-center ms-auto">
+                <div class="nav-right-wrapper">
                     <div class="cartmember d-flex align-items-center">
                         <router-link class="cart-item me-3" to="/ShopCart" @click="closeNav">
                             <img :src="$getImageUrl('shopping_cart.png','icon')" alt="" class="icon-img">
@@ -74,7 +75,6 @@
                         </template>
                     </div>
                 </div>
-            </BCollapse>
             </div>
         </BContainer>
     </BNavbar>
@@ -191,28 +191,35 @@ export default {
 }
 
 .nav-content {
-    display: flex;
-    flex-wrap: nowrap !important;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     width: 100%;
-    max-width: 100%;
-}
-.nav-left{
-    flex: 0 0 auto;
-    display:flex;
     align-items: center;
+    gap: 1rem;
 }
-.nav-center{
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+.nav-left-wrapper {
+    grid-column: 1;
+    justify-self: start;
+    width: auto;
 }
-.nav-right{
-    flex:0 0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
+
+.nav-center-wrapper {
+    grid-column: 2;
+    justify-self: center;
+    width: 400px !important;
+    max-width: 500px;
+}
+
+.nav-right-wrapper {
+    grid-column: 3;
+    justify-self: end;
+    width: auto;
+}
+
+#nav-collapse {
+    flex: none !important;
+    width: auto !important;
 }
 .nav-links {
     flex: 0 0 auto;
@@ -241,6 +248,7 @@ export default {
     border-radius: 8px;
     transition: all 0.3s ease;
     cursor: pointer;
+    
 }
 
 .nav-item-container:hover {
@@ -276,6 +284,9 @@ export default {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+.nav-link{
+    margin-right: 50px;
+}
 .nav-link-text {
     transition: color 0.3s ease;
 }
@@ -319,26 +330,20 @@ export default {
     min-width: 60px;
 }
 .search-container{
-    display: flex;
-    justify-content:start;
-    align-items: center;
-    flex: 0 1 auto;
-    max-width: 400px;
     width: 100%;
-    margin: 0;
-    padding: 0;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
 }
 .search-icon{
     display:none;
 }
 .cartmember{
-    flex: 0 0 auto;
-    margin-left: 0.5rem;
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 0.5rem;
+    width: 100%;
     justify-content: flex-end;
-    min-width: max-content;
 }
 .cart-item{
     display: flex;
@@ -350,6 +355,10 @@ export default {
     border-radius: 20px;
     white-space: nowrap;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.member-item, .cart-item {
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .cart-item:hover{
     background-color: #2563b3;
@@ -449,6 +458,17 @@ export default {
     .navbar-overlay {
         justify-content: space-between;
     }
+    .nav-center-wrapper,
+    .search-container {
+        max-width: 600px; /* 針對特大螢幕額外增加寬度 */
+    }
+    .nav-content {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* 自動適應中間區域寬度變化 */
+    width: 100%;
+    align-items: center;
+    gap: 1rem;
+}
 }
 @media (min-width: 992px) {
     .nav-toggle-text{
@@ -475,47 +495,42 @@ export default {
 }
 
 @media (max-width: 991px) {
-    .nav-content{
-        flex-direction: column;
-        align-items:center;
+    .headerbar{
+        justify-content: center;
+        align-items: center;
     }
     .nav-links{
+        align-items: center;
         justify-content: center;
-        margin-bottom: 1rem;
+        width: 100%;
+        padding: 0;
+    }
+    .nav-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         width: 100%;
     }
-    .nav-item-container{
-        margin:0.25rem 0.5rem;
-        text-align:center;
+    
+    .nav-left-wrapper, .nav-center-wrapper, .nav-right-wrapper {
+        width: 100%;
+        display: flex;
         justify-content: center;
+        margin: 0.5rem 0;
     }
+    
     .search-container {
-        margin:0.5rem 0;
-        justify-content: center;
+        width: 90%;
+        max-width: 400px;
     }
-    .cartmember{
+    
+    .cartmember {
+        flex-wrap: nowrap;
         width: auto;
-        justify-content:center;
-        margin-top:0.5rem;
-        padding:0 0.5rem;
     }
-    .cart-item{
-        margin-left: 0.5rem;
-    }
-    .member-item{
-        margin: 0.25rem;
-        justify-content: center;
-    }
-    .nav-link-text{
-        text-align: center;
-    }
-    .member-info{
-        flex-direction: row;
-        align-items: center;
-        gap:8px;
-    }
-    .welcome-text{
-        margin-bottom:0 ;
+    
+    #nav-collapse {
+        width: 100% !important;
     }
 }
 @media (max-width: 576px) {
@@ -607,7 +622,7 @@ export default {
         flex-shrink: 1; /* 允許導航鏈接縮小以適應空間 */
     }
     .search-container {
-        margin: 0 1rem; /* 在兩側加一些間距 */
+        margin: 0 auto; /* 在兩側加一些間距 */
         max-width: 400px;
         min-width: 250px; /* 設置最小寬度 */
         flex:1 1 auto;
